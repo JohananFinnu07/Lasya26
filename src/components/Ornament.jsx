@@ -115,24 +115,10 @@ export const Mandala = memo(function Mandala({
     >
       <motion.svg
         viewBox="-100 -100 200 200"
-        className="block w-full"
+        className="mandala-rotate block w-full"
         fill="none"
         stroke={stroke}
         strokeWidth="0.55"
-        style={{
-          transformOrigin: "50% 50%",
-          willChange: spin ? "transform" : "auto",
-        }}
-        initial={{ rotate: 0 }}
-        animate={spin ? { rotate: 360 } : undefined}
-        transition={{
-          rotate: {
-            duration: 260,
-            repeat: Infinity,
-            ease: "linear",
-            repeatType: "loop",
-          },
-        }}
       >
         {rings.map((r) => (
           <circle key={r} r={r} />
