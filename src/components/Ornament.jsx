@@ -154,16 +154,33 @@ export const Mandala = memo(function Mandala({
 });
 
 /** One fixed layer of faint mandalas behind the whole page, so nothing is cut off at section edges. */
+
 export function MandalaLayer() {
   return (
     <div
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 z-[1] overflow-hidden"
     >
-      <Mandala pos="tl" opacity={0.3} />
-      <Mandala pos="tr" opacity={0.3} />
-      <Mandala pos="bl" opacity={0.3} />
-      <Mandala pos="br" opacity={0.3} />
+      <Mandala
+        pos="tl"
+        opacity={0.3}
+        className="w-[42vw] max-w-[280px] md:w-[78vw] md:max-w-[560px]"
+      />
+      <Mandala
+        pos="tr"
+        opacity={0.3}
+        className="w-[42vw] max-w-[280px] md:w-[78vw] md:max-w-[560px]"
+      />
+      <Mandala
+        pos="bl"
+        opacity={0.3}
+        className="w-[42vw] max-w-[280px] md:w-[78vw] md:max-w-[560px]"
+      />
+      <Mandala
+        pos="br"
+        opacity={0.3}
+        className="w-[42vw] max-w-[280px] md:w-[78vw] md:max-w-[560px]"
+      />
     </div>
   );
 }
