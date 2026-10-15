@@ -1,104 +1,148 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
-const musicFiles = import.meta.glob("../assets/music/*.{mp3,m4a,ogg,wav}", {
+// Place your music file inside src/assets/music/
+// Supported formats: mp3, m4a, ogg, wav
+const tracks = import.meta.glob("../assets/music/*.{mp3,m4a,ogg,wav}", {
   eager: true,
   query: "?url",
   import: "default",
 });
 
-const musicSrc = Object.values(musicFiles)[0];
+const src = Object.values(tracks)[0];
 
-export default function MusicButton({ visible = true }) {
-  const audioRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+export default function MusicButton({ visible }) {
+  const audio = useRef(null);
+  const [state, setState] = useState("off"); // off | on | muted
 
   useEffect(() => {
-    if (!musicSrc) {
+    if (!src) {
       console.warn("No music file found in src/assets/music/");
       return;
     }
 
-    const audio = new Audio(musicSrc);
-    audio.loop = true;
-    audio.volume = 0.5;
-    audioRef.current = audio;
+    const player = new Audio(src);
+    player.loop = true;
+    player.volume = 0.45;
+    player.preload = "auto";
+
+    const handlePlay = () => setState("on");
+
+    const handlePause = () => {
+      if (state !== "muted") setState("off");
+    };
+
+    const handleError = () => {
+      console.error("Music failed to load:", player.error, src);
+      setState("off");
+    };
+
+    player.addEventListener("play", handlePlay);
+    player.addEventListener("pause", handlePause);
+    player.addEventListener("error", handleError);
+
+    audio.current = player;
 
     return () => {
-      audio.pause();
-      audio.currentTime = 0;
-      audioRef.current = null;
+      player.pause();
+      player.removeEventListener("play", handlePlay);
+      player.removeEventListener("pause", handlePause);
+      player.removeEventListener("error", handleError);
+      player.src = "";
+      audio.current = null;
     };
   }, []);
 
-  const toggleMusic = async () => {
-    const audio = audioRef.current;
+  // Hide the button on the live site if no music file exists.
+  if (!src && !import.meta.env.DEV) return null;
 
-    if (!audio) return;
+  const toggle = async () => {
+    const player = audio.current;
 
-    if (isPlaying) {
-      audio.pause();
-      setIsPlaying(false);
-    } else {
-      try {
-        await audio.play();
-        setIsPlaying(true);
-      } catch (error) {
-        console.error("Unable to play music:", error);
-        setIsPlaying(false);
+    if (!player) {
+      console.error(
+        "No music file found. Add an MP3, M4A, OGG, or WAV file to src/assets/music/.",
+      );
+      return;
+    }
+
+    try {
+      // Playing: mute the music.
+      if (!player.paused && !player.muted) {
+        player.muted = true;
+        setState("muted");
+        return;
       }
+
+      // Already playing but muted: unmute it.
+      if (!player.paused && player.muted) {
+        player.muted = false;
+        setState("on");
+        return;
+      }
+
+      // Start playback directly from the user's tap/click.
+      player.muted = false;
+      await player.play();
+      setState("on");
+    } catch (error) {
+      console.error("Could not play music:", error);
+      setState("off");
     }
   };
+
+  const label =
+    state === "on"
+      ? "Mute music"
+      : state === "muted"
+        ? "Unmute music"
+        : "Play music";
 
   return (
     <motion.button
       type="button"
-      onClick={toggleMusic}
-      initial={false}
+      onClick={toggle}
+      aria-label={label}
+      title={label}
+      className="fixed bottom-5 right-5 z-50 flex h-11 w-11 items-center justify-center rounded-full border border-gold bg-ink/50 text-cream backdrop-blur-md transition-colors duration-500 hover:bg-ink/80"
+      initial={{ opacity: 0 }}
       animate={{
         opacity: visible ? 1 : 0,
-        scale: visible ? 1 : 0.8,
-      }}
-      transition={{ duration: 0.3 }}
-      aria-label={
-        isPlaying ? "Pause background music" : "Play background music"
-      }
-      aria-pressed={isPlaying}
-      className="fixed bottom-5 right-5 z-[9999] flex h-12 w-12 items-center justify-center rounded-full border border-[#c9a96e]/60 bg-[#211414]/90 text-[#e8d2a2] shadow-lg backdrop-blur-md transition-colors hover:bg-[#392323] focus:outline-none focus:ring-2 focus:ring-[#c9a96e]"
-      style={{
         pointerEvents: visible ? "auto" : "none",
       }}
+      transition={{ duration: 1.2, delay: visible ? 2 : 0 }}
     >
-      {isPlaying ? (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="21"
-          height="21"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <rect x="6" y="4" width="4" height="16" rx="1" />
-          <rect x="14" y="4" width="4" height="16" rx="1" />
-        </svg>
+      {state === "on" ? (
+        <span className="flex h-4 items-end gap-[3px]" aria-hidden="true">
+          {[0, 0.4, 0.8].map((delay) => (
+            <motion.span
+              key={delay}
+              className="w-[2px] rounded-full bg-gold"
+              animate={{ height: ["30%", "100%", "30%"] }}
+              transition={{
+                duration: 1.8,
+                delay,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+          ))}
+        </span>
       ) : (
         <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="21"
-          height="21"
           viewBox="0 0 24 24"
+          width="18"
+          height="18"
           fill="none"
           stroke="currentColor"
-          strokeWidth="1.8"
+          strokeWidth="1.2"
           strokeLinecap="round"
-          strokeLinejoin="round"
           aria-hidden="true"
         >
-          <polygon points="6 3 20 12 6 21 6 3" />
+          <path d="M9 18V6l10-2v12" />
+          <circle cx="6.5" cy="18" r="2.5" />
+          <circle cx="16.5" cy="16" r="2.5" />
+          {state === "muted" && <path d="M3 3l18 18" />}
         </svg>
       )}
     </motion.button>
