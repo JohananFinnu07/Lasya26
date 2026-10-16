@@ -164,22 +164,22 @@ export function MandalaLayer() {
       <Mandala
         pos="tl"
         opacity={0.3}
-        className="w-[42vw] max-w-[280px] md:w-[78vw] md:max-w-[560px]"
+        className="w-[55vw] max-w-[340px] md:w-[78vw] md:max-w-[560px]"
       />
       <Mandala
         pos="tr"
         opacity={0.3}
-        className="w-[42vw] max-w-[280px] md:w-[78vw] md:max-w-[560px]"
+        className="w-[55vw] max-w-[340px] md:w-[78vw] md:max-w-[560px]"
       />
       <Mandala
         pos="bl"
         opacity={0.3}
-        className="w-[42vw] max-w-[280px] md:w-[78vw] md:max-w-[560px]"
+        className="w-[55vw] max-w-[340px] md:w-[78vw] md:max-w-[560px]"
       />
       <Mandala
         pos="br"
         opacity={0.3}
-        className="w-[42vw] max-w-[280px] md:w-[78vw] md:max-w-[560px]"
+        className="w-[55vw] max-w-[340px] md:w-[78vw] md:max-w-[560px]"
       />
     </div>
   );
