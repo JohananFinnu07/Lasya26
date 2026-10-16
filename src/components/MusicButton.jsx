@@ -1,11 +1,6 @@
 import { useSyncExternalStore } from "react";
 import { motion } from "framer-motion";
-import {
-  getState,
-  hasMusic,
-  subscribe,
-  toggleMusic,
-} from "../utils/music/music";
+import { getState, hasMusic, subscribe, toggleMusic } from "../utils/music";
 
 export default function MusicButton({ visible }) {
   const state = useSyncExternalStore(subscribe, getState); // off | on | muted
