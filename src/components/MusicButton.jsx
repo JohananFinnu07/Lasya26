@@ -2,14 +2,13 @@ import { useSyncExternalStore } from "react";
 import { motion } from "framer-motion";
 import { getState, hasMusic, subscribe, toggleMusic } from "../utils/music";
 
-/** Speaker icon: waves when playing, a cross when muted. */
-function Speaker({ state }) {
-  const playing = state === "on";
+/** Speaker icon: waves pulse while playing, a cross shows when muted or not started. */
+function Speaker({ playing }) {
   return (
     <svg
       viewBox="0 0 24 24"
-      width="20"
-      height="20"
+      width="22"
+      height="22"
       fill="none"
       stroke="currentColor"
       strokeWidth="1.5"
@@ -22,12 +21,12 @@ function Speaker({ state }) {
         <>
           <motion.path
             d="M15.2 9.3a4 4 0 0 1 0 5.4"
-            animate={{ opacity: [0.35, 1, 0.35] }}
+            animate={{ opacity: [0.3, 1, 0.3] }}
             transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
           />
           <motion.path
             d="M17.8 6.8a7.6 7.6 0 0 1 0 10.4"
-            animate={{ opacity: [0.2, 1, 0.2] }}
+            animate={{ opacity: [0.15, 1, 0.15] }}
             transition={{
               duration: 1.8,
               delay: 0.35,
@@ -64,12 +63,6 @@ export default function MusicButton({ visible }) {
       : state === "muted"
         ? "Unmute music"
         : "Play music";
-  const text =
-    state === "on"
-      ? "MUSIC ON"
-      : state === "muted"
-        ? "MUSIC OFF"
-        : "PLAY MUSIC";
 
   return (
     <motion.button
@@ -77,7 +70,7 @@ export default function MusicButton({ visible }) {
       onClick={onClick}
       aria-label={label}
       title={label}
-      className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full border border-gold bg-ink/75 py-2.5 pl-3.5 pr-4 text-cream shadow-[0_0_18px_rgba(201,162,77,0.2)] backdrop-blur-md transition-colors duration-500 hover:bg-ink"
+      className={`fixed bottom-4 right-4 z-50 flex h-12 w-12 items-center justify-center rounded-full border border-gold bg-ink/75 shadow-[0_0_18px_rgba(201,162,77,0.2)] backdrop-blur-md transition-colors duration-500 hover:bg-ink ${state === "on" ? "text-gold" : "text-cream/80"}`}
       initial={{ opacity: 0 }}
       animate={{
         opacity: visible ? 1 : 0,
@@ -85,15 +78,7 @@ export default function MusicButton({ visible }) {
       }}
       transition={{ duration: 1.2, delay: visible ? 2 : 0 }}
     >
-      <span className={state === "on" ? "text-gold" : "text-cream/80"}>
-        <Speaker state={state} />
-      </span>
-      <span
-        className="font-display text-[10px] tracking-[0.22em]"
-        aria-live="polite"
-      >
-        {text}
-      </span>
+      <Speaker playing={state === "on"} />
     </motion.button>
   );
 }
