@@ -6,7 +6,7 @@ import Cursor from "./components/Cursor";
 import NavPill from "./components/NavPill";
 import { MandalaLayer } from "./components/Ornament";
 import MusicButton from "./components/MusicButton";
-import { startMusic } from "./utils/music/music";
+import { startMusic } from "./utils/music";
 import Hero from "./components/Hero";
 import BibleVerse from "./components/BibleVerse";
 import Invitation from "./components/Invitation";
